@@ -2,10 +2,10 @@ import AVKit
 import RegexBuilder
 
 public struct Subtitle {
-    let from: Double
-    let to: Double
-    let text: String
-    var interval: ClosedRange<Double> {
+    public let from: Double
+    public let to: Double
+    public let text: String
+    public var interval: ClosedRange<Double> {
         from...to
     }
 }
