@@ -14,9 +14,12 @@ public struct Subtitles {
     var entries: [Subtitle]
 
     /// File expected to have UTF-8 encoding
-    public init(from url: URL) throws {
-        let string = try String(contentsOf: url)
-        entries = try parseSubRip(string)
+    public init?(from url: URL) {
+        guard let string = try? String(contentsOf: url),
+              let parsedStrings = try? parseSubRip(string) else {
+                  return nil
+              }        
+        entries = parsedStrings
     }
 
     public func getSubtitle(at timeStamp: TimeInterval) -> Subtitle? {
@@ -27,24 +30,44 @@ public struct Subtitles {
 }
 
 private func parseSubRip(_ payload: String) throws -> [Subtitle] {
-    // Recognize the SubRip format
 
-    let regex = try! Regex(#"([0-9]+)\n([[0-9]:,.]+)\s+-{2}\>\s+([[0-9]:,.]+)\n([\s\S]*?(?=\n{2,}|$))"#)
+    // Recognize the SubRip format
+    let regex = Regex {
+        Capture {
+            OneOrMore(.digit)
+            OneOrMore(.whitespace)
+
+            OneOrMore(
+                CharacterClass(
+                    .anyOf(":,."),
+                    .digit
+                )
+            )
+            OneOrMore(.whitespace)
+
+            "-->"
+            OneOrMore(.whitespace)
+
+            OneOrMore(
+                CharacterClass(
+                    .anyOf(":,."),
+                    .digit
+                )
+            )
+            OneOrMore(.whitespace)
+
+            OneOrMore(.anyGraphemeCluster)
+        }
+        OneOrMore(.whitespace)
+    }
 
 
     // Split entry into named groups
-    let index = Reference(Substring.self)
-    let from = Reference(Substring.self)
-    let to = Reference(Substring.self)
-    let text = Reference(Substring.self)
-
-    // 1
-    // 00:00:01,240 --> 00:00:05,080
-    // Dette her er TIDENES MOMENTO!!!
+    let from = Reference(TimeInterval.self)
+    let to = Reference(TimeInterval.self)
+    let text = Reference(String.self)
     let entryRegex = Regex {
-        Capture(as: index) {
-            OneOrMore(.digit)
-        }
+        OneOrMore(.digit)
         OneOrMore(.whitespace)
 
         Capture(as: from) {
@@ -54,6 +77,8 @@ private func parseSubRip(_ payload: String) throws -> [Subtitle] {
                     .digit
                 )
             }
+        } transform: { substring in
+            String(substring).timeInterval
         }
         OneOrMore(.whitespace)
         "-->"
@@ -65,23 +90,24 @@ private func parseSubRip(_ payload: String) throws -> [Subtitle] {
                     .digit
                 )
             }
+        } transform: { substring in
+            String(substring).timeInterval
         }
         OneOrMore(.whitespace)
 
         Capture(as: text) {
             OneOrMore(.anyGraphemeCluster)
+        } transform: { substring in
+            String(substring)
         }
     }
 
     return payload.ranges(of: regex).compactMap {
-
         guard let entry = try? entryRegex.wholeMatch(in: payload[$0]) else {
             fatalError("Beep boop")
         }
 
-        return Subtitle(from: String(entry[from]).timeInterval,
-                        to: String(entry[to]).timeInterval,
-                        text: String(entry[text]))
+        return Subtitle(from: entry[from], to: entry[to], text: entry[text])
     }
 }
 

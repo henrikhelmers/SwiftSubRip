@@ -1,5 +1,5 @@
 import XCTest
-@testable import swift_subrip
+@testable import SwiftSubRip
 
 final class swift_subripTests: XCTestCase {
     let urls = ["sample1", "sample2"].compactMap {
@@ -8,14 +8,14 @@ final class swift_subripTests: XCTestCase {
     
     func testOutput() throws {
         urls.forEach {
-            XCTAssertNotNil(try? Subtitles(from: $0))
+            XCTAssertNotNil(Subtitles(from: $0))
         }
     }
     
     func testPerformance() {
         measure {
             urls.forEach {
-                let _ = try? Subtitles(from: $0)
+                let _ = Subtitles(from: $0)
             }
         }
     }
