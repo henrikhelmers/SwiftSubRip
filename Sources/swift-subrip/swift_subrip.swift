@@ -14,12 +14,12 @@ public struct Subtitles {
     var entries: [Subtitle]
 
     /// File expected to have UTF-8 encoding
-    init(from url: URL) throws {
+    public init(from url: URL) throws {
         let string = try String(contentsOf: url)
         entries = try parseSubRip(string)
     }
 
-    func getSubtitle(at timeStamp: TimeInterval) -> Subtitle? {
+    public func getSubtitle(at timeStamp: TimeInterval) -> Subtitle? {
         entries.first(where: {
             $0.interval.contains(timeStamp)
         })
