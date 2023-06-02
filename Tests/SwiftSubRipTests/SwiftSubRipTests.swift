@@ -20,7 +20,7 @@ final class swift_subripTests: XCTestCase {
             XCTAssert(false)
             return
         }
-        let text = subtitles.getSubtitle(at: 5.0)?.text
+        let text = subtitles.getText(at: 5.0)
         XCTAssertNotNil(text)
         XCTAssertEqual(text, matchText)
     }
@@ -32,7 +32,7 @@ final class swift_subripTests: XCTestCase {
             XCTAssert(false)
             return
         }
-        let text = subtitles.getSubtitle(at: 3.0)?.text
+        let text = subtitles.getText(at: 3.0)
         XCTAssertNotNil(text)
         XCTAssertNotEqual(text, matchText)
     }

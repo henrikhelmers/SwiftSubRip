@@ -7,61 +7,30 @@ func makeSubtitle(from inputString: String) -> Subtitle? {
     let to = Reference(TimeInterval.self)
     let text = Reference(String.self)
     
-    // Split into named groups
-    let entryRegex = Regex {
+    let regex = Regex {
         OneOrMore(.digit)
         OneOrMore(.whitespace)
-        
         Capture(as: from) {
             OneOrMore {
-                CharacterClass(
-                    .anyOf(":,."),
-                    .digit
-                )
+                CharacterClass(.anyOf(":,."), .digit)
             }
-        } transform: { substring in
-            String(substring).timeInterval
-        }
-        OneOrMore(.whitespace)
-        "-->"
-        OneOrMore(.whitespace)
+        } transform: { String($0).timeInterval }
+        " --> "
         Capture(as: to) {
             OneOrMore {
-                CharacterClass(
-                    .anyOf(":,."),
-                    .digit
-                )
+                CharacterClass(.anyOf(":,."), .digit)
             }
-        } transform: { substring in
-            String(substring).timeInterval
-        }
+        } transform: { String($0).timeInterval}
         OneOrMore(.whitespace)
-        
         Capture(as: text) {
             OneOrMore(.anyGraphemeCluster)
-        } transform: { substring in
-            String(substring)
-        }
+        } transform: { String($0) }
     }
     
-    guard let entry = try? entryRegex.wholeMatch(in: inputString) else {
-        assertionFailure("Failed to parse regex")
+    guard let entry = try? regex.wholeMatch(in: inputString) else {
+        assertionFailure("Failed to match regex")
         return nil
     }
     
     return Subtitle(from: entry[from], to: entry[to], text: entry[text])
-}
-
-
-private extension String {
-    var timeInterval: TimeInterval {
-        let commaToPeriod = replacingOccurrences(of: ",", with: ".")
-        let components = commaToPeriod.components(separatedBy: [":"])
-        var interval: Double = 0
-
-        for (index, part) in components.reversed().enumerated() {
-            interval += (Double(part) ?? 0) * pow(Double(60), Double(index))
-        }
-        return interval
-    }
 }

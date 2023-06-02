@@ -18,20 +18,26 @@ public struct Subtitles {
         guard let string = try? String(contentsOf: url),
               let subtitles = parseSubRip(string) else {
                   return nil
-              }        
+              }
         entries = subtitles
     }
 
+    /// Returns a Subtitle at a given TimeInterval
     public func getSubtitle(at timeStamp: TimeInterval) -> Subtitle? {
         entries.first(where: {
-            return $0.interval.contains(timeStamp)
+            $0.interval.contains(timeStamp)
         })
+    }
+
+    /// Returns a String at a given TimeInterval
+    public func getText(at timeStamp: TimeInterval) -> String? {
+        getSubtitle(at: timeStamp)?.text
     }
 }
 
-func parseSubRip(_ text: String) -> [Subtitle]? {
+private func parseSubRip(_ text: String) -> [Subtitle]? {
     let subtitles = text.split(separator: "\n\n").compactMap {
-        return makeSubtitle(from: String($0))
+        makeSubtitle(from: String($0))
     }
     return subtitles.isEmpty ? nil : subtitles
 }
