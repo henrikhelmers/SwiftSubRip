@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "4F359550-78BC-4DC7-A231-617C8C0F925D",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "SwiftSubRipTests",
+        "name" : "SwiftSubRipTests"
+      }
+    }
+  ],
+  "version" : 1
+}

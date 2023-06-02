@@ -1,3 +1,3 @@
-# swift-subrip
+# SwiftSubRip
 
 A description of this package.

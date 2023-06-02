@@ -3,20 +3,20 @@
 import PackageDescription
 
 let package = Package(
-    name: "swift-subrip",
+    name: "SwiftSubRip",
     platforms: [
         .iOS(.v16),
         .macOS(.v13)
     ],
     products: [
-        .library(name: "swift-subrip", targets: ["swift-subrip"]),
+        .library(name: "SwiftSubRip", targets: ["SwiftSubRip"]),
     ],
     targets: [
-        .target(name: "swift-subrip",
+        .target(name: "SwiftSubRip",
                 dependencies: []
                ),
-        .testTarget(name: "swift-subripTests",
-                    dependencies: ["swift-subrip"],
+        .testTarget(name: "SwiftSubRipTests",
+                    dependencies: ["SwiftSubRip"],
                     resources: [.process("Resources")]
                    ),
     ]
