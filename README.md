@@ -13,24 +13,16 @@ In the twilight's gentle glow,
 ```
 
 #### Using
-```
+```swift
 let subtitles = Subtitles(from: <fileUrl>)
 ```
 
-#### Into
-```
-Subtitles {
-  entries: [
-    Subtitle {
-      from: 0.0
-      to: 4.0
-      text: "In the twilight's gentle glow,"
-    }
-  ]
-}
+#### Get subtitle at given time
+```swift
+subtitles.subtitle(at: 2) // { from: 0.0, to: 4.0, text: "In the twilight's gentle glow," }
 ```
 
 #### Get text at given time
-```
+```swift
 subtitles.getText(at: 2) // "In the twilight's gentle glow,"
 ```
